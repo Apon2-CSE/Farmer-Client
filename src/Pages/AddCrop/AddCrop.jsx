@@ -22,13 +22,11 @@ const AddCrop = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!formData.name || !formData.type || !formData.pricePerUnit) {
       toast.error("Please fill all required fields!");
       return;
@@ -47,7 +45,7 @@ const AddCrop = () => {
     setLoading(true);
     try {
       await axios.post("http://localhost:3000/crops", cropData);
-      toast.success("🌿 Crop added successfully!");
+      toast.success("🌾 Crop added successfully!");
       navigate("/myposts");
     } catch (error) {
       console.error(error);
@@ -58,130 +56,119 @@ const AddCrop = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-900 via-emerald-800 to-green-700 flex items-center justify-center px-4 py-10 relative overflow-hidden">
-      {/* Background Decorative Glow */}
-      <div className="absolute inset-0">
-        <div className="absolute w-80 h-80 bg-lime-400/20 rounded-full blur-3xl top-10 left-10 animate-pulse"></div>
-        <div className="absolute w-80 h-80 bg-emerald-500/20 rounded-full blur-3xl bottom-10 right-10 animate-pulse"></div>
+    <div className="min-h-screen bg-gradient-to-br from-green-950 via-emerald-800 to-lime-700 flex items-center justify-center px-3 py-10 relative overflow-hidden">
+      {/* Decorative background glow */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute w-64 h-64 bg-lime-400/20 rounded-full blur-3xl top-10 left-10 animate-pulse"></div>
+        <div className="absolute w-72 h-72 bg-emerald-500/20 rounded-full blur-3xl bottom-10 right-10 animate-pulse"></div>
       </div>
 
+      {/* Animated container */}
       <motion.div
-        initial={{ opacity: 0, y: 25 }}
+        initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="relative z-10 w-full max-w-3xl backdrop-blur-xl bg-white/10 border border-white/20 shadow-2xl rounded-2xl p-8 sm:p-10 text-white"
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="relative z-10 w-full max-w-2xl bg-white/10 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.3)] rounded-2xl p-6 sm:p-8 text-white"
       >
-        {/* Header */}
         <motion.h2
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="text-3xl font-bold text-center text-lime-300 mb-6"
+          className="text-2xl sm:text-3xl font-extrabold text-center text-lime-300 mb-6 tracking-wide drop-shadow-lg"
         >
-          Add New Crop 🌱
+          🌱 Add a New Crop
         </motion.h2>
 
         <form
           onSubmit={handleSubmit}
-          className="grid grid-cols-1 md:grid-cols-2 gap-5"
+          className="grid grid-cols-1 md:grid-cols-2 gap-4"
         >
-          {/* Crop Name */}
-          <div className="col-span-1">
-            <label className="block text-sm mb-1 text-white/80">
-              Crop Name
-            </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="Enter crop name"
-              className="w-full p-3 rounded-md border border-white/30 bg-white/10 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-lime-400"
-              required
-            />
-          </div>
-
-          {/* Type */}
-          <div className="col-span-1">
-            <label className="block text-sm mb-1 text-white/80">
-              Crop Type
-            </label>
-            <select
-              name="type"
-              value={formData.type}
-              onChange={handleChange}
-              className="w-full p-3 rounded-md border border-white/30 bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-lime-400"
-              required
+          {/* Input Fields */}
+          {[
+            {
+              label: "Crop Name",
+              name: "name",
+              type: "text",
+              placeholder: "Enter crop name",
+            },
+            {
+              label: "Crop Type",
+              name: "type",
+              type: "select",
+              options: ["Vegetable", "Fruit", "Grain", "Other"],
+            },
+            {
+              label: "Price per Unit",
+              name: "pricePerUnit",
+              type: "number",
+              placeholder: "e.g., 50",
+            },
+            {
+              label: "Unit",
+              name: "unit",
+              type: "text",
+              placeholder: "kg, ton, bag...",
+            },
+            {
+              label: "Quantity (optional)",
+              name: "quantity",
+              type: "number",
+              placeholder: "e.g., 100",
+            },
+            {
+              label: "Location",
+              name: "location",
+              type: "text",
+              placeholder: "e.g., Dhaka, Bangladesh",
+            },
+          ].map((field, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 * i }}
+              className="flex flex-col"
             >
-              <option value="">Select Type</option>
-              <option value="Vegetable">Vegetable</option>
-              <option value="Fruit">Fruit</option>
-              <option value="Grain">Grain</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-
-          {/* Price Per Unit */}
-          <div className="col-span-1">
-            <label className="block text-sm mb-1 text-white/80">
-              Price per Unit
-            </label>
-            <input
-              type="number"
-              name="pricePerUnit"
-              value={formData.pricePerUnit}
-              onChange={handleChange}
-              placeholder="e.g., 50"
-              className="w-full p-3 rounded-md border border-white/30 bg-white/10 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-lime-400"
-              required
-            />
-          </div>
-
-          {/* Unit */}
-          <div className="col-span-1">
-            <label className="block text-sm mb-1 text-white/80">Unit</label>
-            <input
-              type="text"
-              name="unit"
-              value={formData.unit}
-              onChange={handleChange}
-              placeholder="kg, ton, bag..."
-              className="w-full p-3 rounded-md border border-white/30 bg-white/10 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-lime-400"
-              required
-            />
-          </div>
-
-          {/* Quantity */}
-          <div className="col-span-1">
-            <label className="block text-sm mb-1 text-white/80">
-              Quantity (optional)
-            </label>
-            <input
-              type="number"
-              name="quantity"
-              value={formData.quantity}
-              onChange={handleChange}
-              placeholder="e.g., 100"
-              className="w-full p-3 rounded-md border border-white/30 bg-white/10 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-lime-400"
-            />
-          </div>
-
-          {/* Location */}
-          <div className="col-span-1">
-            <label className="block text-sm mb-1 text-white/80">Location</label>
-            <input
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              placeholder="e.g., Dhaka, Bangladesh"
-              className="w-full p-3 rounded-md border border-white/30 bg-white/10 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-lime-400"
-            />
-          </div>
+              <label className="text-sm mb-1 text-white/80">
+                {field.label}
+              </label>
+              {field.type === "select" ? (
+                <select
+                  name={field.name}
+                  value={formData[field.name]}
+                  onChange={handleChange}
+                  required
+                  className="p-2.5 sm:p-3 rounded-md border border-white/30 bg-white/10 text-white focus:outline-none focus:ring-2 focus:ring-lime-400"
+                >
+                  <option value="">Select Type</option>
+                  {field.options.map((opt) => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type={field.type}
+                  name={field.name}
+                  value={formData[field.name]}
+                  onChange={handleChange}
+                  placeholder={field.placeholder}
+                  className="p-2.5 sm:p-3 rounded-md border border-white/30 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-lime-400"
+                  required={field.name !== "quantity"}
+                />
+              )}
+            </motion.div>
+          ))}
 
           {/* Image URL */}
-          <div className="col-span-1 md:col-span-2">
-            <label className="block text-sm mb-1 text-white/80">
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="md:col-span-2"
+          >
+            <label className="text-sm mb-1 text-white/80">
               Image URL (optional)
             </label>
             <input
@@ -190,37 +177,43 @@ const AddCrop = () => {
               value={formData.image}
               onChange={handleChange}
               placeholder="https://example.com/image.jpg"
-              className="w-full p-3 rounded-md border border-white/30 bg-white/10 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-lime-400"
+              className="w-full p-2.5 sm:p-3 rounded-md border border-white/30 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-lime-400"
             />
-          </div>
+          </motion.div>
 
           {/* Description */}
-          <div className="col-span-1 md:col-span-2">
-            <label className="block text-sm mb-1 text-white/80">
-              Description
-            </label>
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="md:col-span-2"
+          >
+            <label className="text-sm mb-1 text-white/80">Description</label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
               placeholder="Write a short description..."
-              className="w-full p-3 rounded-md border border-white/30 bg-white/10 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-lime-400"
               rows="3"
+              className="w-full p-2.5 sm:p-3 rounded-md border border-white/30 bg-white/10 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-lime-400"
             ></textarea>
-          </div>
+          </motion.div>
 
           {/* Submit Button */}
-          <div className="col-span-1 md:col-span-2 text-center">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={{ type: "spring", stiffness: 200 }}
+            className="md:col-span-2 text-center mt-4"
+          >
+            <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 font-semibold bg-gradient-to-r from-lime-500 to-green-600 hover:from-lime-400 hover:to-green-500 text-black rounded-lg shadow-lg transition-all duration-300"
+              className="w-full py-2.5 sm:py-3 bg-gradient-to-r from-lime-500 to-green-600 hover:from-lime-400 hover:to-green-500 text-black font-semibold rounded-lg shadow-xl transition-all duration-300"
             >
-              {loading ? "Adding Crop..." : "Add Crop"}
-            </motion.button>
-          </div>
+              {loading ? "Adding Crop..." : "Add Crop 🌿"}
+            </button>
+          </motion.div>
         </form>
       </motion.div>
     </div>
