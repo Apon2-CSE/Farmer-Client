@@ -1,23 +1,23 @@
-import React from 'react';
-import Slider from 'react-slick';
-import slider1 from '../assets/slider1.jpg'
-import slider2 from '../assets/slider2.jpg'
-import slider3 from '../assets/slider3.jpg'
+import React from "react";
+import Slider from "react-slick";
+import slider1 from "../assets/slider1.jpg";
+import slider2 from "../assets/slider2.jpg";
+import slider3 from "../assets/slider3.jpg";
 
 const HeroSection = () => {
- const slides = [
+  const slides = [
     {
-      image: slider2,
+      image: slider1,
       title: "Fresh Vegetables from Local Farmers",
       subtitle: "Get the best produce directly from the source",
     },
     {
-      image: slider3,
+      image: slider2,
       title: "Connect with Farmers Easily",
       subtitle: "Buy or show interest in crops in just a few clicks",
     },
     {
-      image: slider1,
+      image: slider3,
       title: "Organic and Healthy Crops",
       subtitle: "Support sustainable farming practices",
     },
