@@ -74,10 +74,13 @@ const CropDetails = () => {
 
   const handleInterestAction = async (interestId, action) => {
     try {
-      await axios.put(`http://localhost:3000/crops/${crop._id}/interest`, {
-        interestId,
-        status: action,
-      });
+      await axios.put(
+        `https://krishi-db-server-hvmd5lfln-apon2-cses-projects.vercel.app/crops${crop._id}/interest`,
+        {
+          interestId,
+          status: action,
+        }
+      );
       setInterests(
         interests.map((i) =>
           i._id === interestId ? { ...i, status: action } : i
