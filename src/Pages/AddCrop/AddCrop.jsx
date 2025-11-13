@@ -44,10 +44,7 @@ const AddCrop = () => {
 
     setLoading(true);
     try {
-      await axios.post(
-        "https://krishi-db-server-hvmd5lfln-apon2-cses-projects.vercel.app/crops",
-        cropData
-      );
+      await axios.post("https://krishi-db-server.vercel.app/crops", cropData);
       toast.success("🌾 Crop added successfully!");
       navigate("/myposts");
     } catch (error) {

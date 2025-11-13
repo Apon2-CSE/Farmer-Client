@@ -16,7 +16,7 @@ const MyInterests = () => {
       try {
         setLoading(true);
         const res = await axios.get(
-          `http://localhost:3000/my-interests?userEmail=${user.email}`
+          `https://krishi-db-server.vercel.app/crops/my-interests?userEmail=${user.email}`
         );
         setInterests(res.data);
       } catch (err) {

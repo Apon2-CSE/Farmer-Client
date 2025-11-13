@@ -17,8 +17,12 @@ const Myposts = () => {
   const fetchCrops = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`http://localhost:3000/crops`);
-      const userCrops = res.data.filter(c => c.owner?.ownerEmail === user.email);
+      const res = await axios.get(
+        `https://krishi-db-server.vercel.app/crops/${_id}`
+      );
+      const userCrops = res.data.filter(
+        (c) => c.owner?.ownerEmail === user.email
+      );
       setCrops(userCrops);
     } catch (err) {
       console.error(err);
@@ -34,13 +38,15 @@ const Myposts = () => {
 
   // Handle Delete
   const handleDelete = async (cropId) => {
-    const confirm = window.confirm("Are you sure you want to delete this crop?");
+    const confirm = window.confirm(
+      "Are you sure you want to delete this crop?"
+    );
     if (!confirm) return;
 
     try {
-      await axios.delete(`http://localhost:3000/crops/${cropId}`);
+      await axios.delete(`https://krishi-db-server.vercel.app/crops/${cropId}`);
       toast.success("Crop deleted successfully!");
-      setCrops(crops.filter(c => c._id !== cropId));
+      setCrops(crops.filter((c) => c._id !== cropId));
     } catch (err) {
       console.error(err);
       toast.error("Failed to delete crop");
@@ -56,12 +62,18 @@ const Myposts = () => {
   // Handle Edit Save
   const handleSave = async () => {
     try {
-      const { _id, name, pricePerUnit, quantity, unit, location, description } = editCrop;
-      await axios.put(`http://localhost:3000/crops/${_id}`, {
-        name, pricePerUnit, quantity, unit, location, description
+      const { _id, name, pricePerUnit, quantity, unit, location, description } =
+        editCrop;
+      await axios.put(`https://krishi-db-server.vercel.app/crops/${_id}`, {
+        name,
+        pricePerUnit,
+        quantity,
+        unit,
+        location,
+        description,
       });
       toast.success("Crop updated successfully!");
-      setCrops(crops.map(c => c._id === _id ? editCrop : c));
+      setCrops(crops.map((c) => (c._id === _id ? editCrop : c)));
       setEditModalOpen(false);
     } catch (err) {
       console.error(err);
@@ -69,7 +81,7 @@ const Myposts = () => {
     }
   };
 
-  if (loading) return   <LoadingScreen></LoadingScreen>
+  if (loading) return <LoadingScreen></LoadingScreen>;
 
   return (
     <div className="max-w-6xl mx-auto p-6">
@@ -89,11 +101,15 @@ const Myposts = () => {
               </tr>
             </thead>
             <tbody>
-              {crops.map(crop => (
+              {crops.map((crop) => (
                 <tr key={crop._id}>
                   <td className="border px-4 py-2">{crop.name}</td>
-                  <td className="border px-4 py-2">{crop.pricePerUnit} tk/ {crop.unit}</td>
-                  <td className="border px-4 py-2">{crop.quantity} {crop.unit}</td>
+                  <td className="border px-4 py-2">
+                    {crop.pricePerUnit} tk/ {crop.unit}
+                  </td>
+                  <td className="border px-4 py-2">
+                    {crop.quantity} {crop.unit}
+                  </td>
                   <td className="border px-4 py-2">{crop.location}</td>
                   <td className="border px-4 py-2 flex gap-2">
                     <button
@@ -125,41 +141,53 @@ const Myposts = () => {
             <input
               type="text"
               value={editCrop.name}
-              onChange={e => setEditCrop({ ...editCrop, name: e.target.value })}
+              onChange={(e) =>
+                setEditCrop({ ...editCrop, name: e.target.value })
+              }
               className="w-full border rounded p-2 mb-2"
             />
             <label className="block mb-2">Price Per Unit</label>
             <input
               type="number"
               value={editCrop.pricePerUnit}
-              onChange={e => setEditCrop({ ...editCrop, pricePerUnit: e.target.value })}
+              onChange={(e) =>
+                setEditCrop({ ...editCrop, pricePerUnit: e.target.value })
+              }
               className="w-full border rounded p-2 mb-2"
             />
             <label className="block mb-2">Quantity</label>
             <input
               type="number"
               value={editCrop.quantity}
-              onChange={e => setEditCrop({ ...editCrop, quantity: e.target.value })}
+              onChange={(e) =>
+                setEditCrop({ ...editCrop, quantity: e.target.value })
+              }
               className="w-full border rounded p-2 mb-2"
             />
             <label className="block mb-2">Unit</label>
             <input
               type="text"
               value={editCrop.unit}
-              onChange={e => setEditCrop({ ...editCrop, unit: e.target.value })}
+              onChange={(e) =>
+                setEditCrop({ ...editCrop, unit: e.target.value })
+              }
               className="w-full border rounded p-2 mb-2"
             />
             <label className="block mb-2">Location</label>
             <input
               type="text"
               value={editCrop.location}
-              onChange={e => setEditCrop({ ...editCrop, location: e.target.value })}
+              onChange={(e) =>
+                setEditCrop({ ...editCrop, location: e.target.value })
+              }
               className="w-full border rounded p-2 mb-2"
             />
             <label className="block mb-2">Description</label>
             <textarea
               value={editCrop.description}
-              onChange={e => setEditCrop({ ...editCrop, description: e.target.value })}
+              onChange={(e) =>
+                setEditCrop({ ...editCrop, description: e.target.value })
+              }
               className="w-full border rounded p-2 mb-4"
             />
             <div className="flex justify-end gap-2">

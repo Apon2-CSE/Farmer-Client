@@ -57,7 +57,7 @@ const CropDetails = () => {
 
     try {
       const res = await axios.post(
-        `http://localhost:3000/crops/${crop._id}/interest`,
+        `https://krishi-db-server.vercel.app/crops/${crop._id}/interest`,
         interestData
       );
       toast.success("Interest submitted successfully!");
@@ -75,7 +75,7 @@ const CropDetails = () => {
   const handleInterestAction = async (interestId, action) => {
     try {
       await axios.put(
-        `https://krishi-db-server-hvmd5lfln-apon2-cses-projects.vercel.app/crops${crop._id}/interest`,
+        `https://krishi-db-server.vercel.app/crops/${crop._id}/interest`,
         {
           interestId,
           status: action,
