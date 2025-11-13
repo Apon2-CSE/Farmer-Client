@@ -17,9 +17,8 @@ const Myposts = () => {
   const fetchCrops = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(
-        `https://krishi-db-server.vercel.app/crops/${_id}`
-      );
+      // Fetch all crops (not a specific crop)
+      const res = await axios.get(`https://krishi-db-server.vercel.app/crops`);
       const userCrops = res.data.filter(
         (c) => c.owner?.ownerEmail === user.email
       );
@@ -33,7 +32,7 @@ const Myposts = () => {
   };
 
   useEffect(() => {
-    fetchCrops();
+    if (user?.email) fetchCrops();
   }, [user]);
 
   // Handle Delete
@@ -81,7 +80,7 @@ const Myposts = () => {
     }
   };
 
-  if (loading) return <LoadingScreen></LoadingScreen>;
+  if (loading) return <LoadingScreen />;
 
   return (
     <div className="max-w-6xl mx-auto p-6">

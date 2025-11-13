@@ -6,19 +6,22 @@ const FeaturedFarmers = () => {
     {
       name: "Rahim Uddin",
       location: "Rajshahi, Bangladesh",
-      image: "https://source.unsplash.com/400x400/?farmer,portrait",
+      image:
+        "https://media.licdn.com/dms/image/C4D03AQHdZTiapbgVSQ/profile-displayphoto-shrink_800_800/0/1655539635259?e=2147483647&v=beta&t=Xg9BeHf7lSW7rNGn_aRKPLorIp5oyBipymdnKfY5d4A",
       crops: "Tomato, Potato, Mango",
     },
     {
       name: "Fatema Begum",
       location: "Cumilla, Bangladesh",
-      image: "https://source.unsplash.com/400x400/?woman,farmer",
+      image:
+        "https://tse1.mm.bing.net/th/id/OIP.6eqvmkU94TlLcMxWonU06wHaE8?pid=Api&P=0&h=220",
       crops: "Brinjal, Cucumber, Chili",
     },
     {
       name: "Shahidul Islam",
       location: "Sylhet, Bangladesh",
-      image: "https://source.unsplash.com/400x400/?agriculture,person",
+      image:
+        "https://tse3.mm.bing.net/th/id/OIP.KhhU92DU2_D0m-FsjjGGWQHaE8?pid=Api&P=0&h=220",
       crops: "Paddy, Wheat, Corn",
     },
   ];

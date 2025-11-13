@@ -5,7 +5,7 @@ import { Authcontext } from "../../context/Authcontext";
 import toast from "react-hot-toast";
 import axios from "axios";
 import LoadingScreen from "../Loading/LoadingScreen";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 const CropDetails = () => {
   const { products, loading, error } = useProduct();
@@ -19,6 +19,7 @@ const CropDetails = () => {
   const [interests, setInterests] = useState([]);
 
   useEffect(() => {
+    document.title = "CropDetails | KrishiLink";
     if (products.length > 0) {
       const foundCrop = products.find((p) => String(p._id) === id);
       if (foundCrop) {
@@ -31,21 +32,20 @@ const CropDetails = () => {
   if (loading) return <LoadingScreen />;
   if (error)
     return <div className="text-red-500 text-center mt-20">{error}</div>;
-  if (!crop)
-    return (
-      <div className="text-center mt-20 text-gray-200">Crop not found</div>
-    );
+  if (!crop) return <div className="text-center mt-20">Crop not found</div>;
 
   const totalPrice = quantity * crop.pricePerUnit;
   const hasInterest = interests.some((i) => i.userEmail === user?.email);
-  const isOwner = user?.email === crop.owner?.ownerEmail;
+  const isOwner = user?.email === crop.owner?.email;
 
   const handleInterestSubmit = async (e) => {
     e.preventDefault();
     if (quantity < 1) return toast.error("Quantity must be at least 1");
-    if (hasInterest) return toast.error("You have already sent interest");
+    if (hasInterest)
+      return toast.error("You already sent an interest for this crop");
 
     setSubmitting(true);
+
     const interestData = {
       cropId: crop._id,
       userEmail: user.email,
@@ -60,13 +60,16 @@ const CropDetails = () => {
         `https://krishi-db-server.vercel.app/crops/${crop._id}/interest`,
         interestData
       );
-      toast.success("Interest submitted successfully!");
-      setInterests([...interests, res.data]);
+
+      const newInterest = res.data.interest || res.data; // backend must return interest object
+
+      toast.success("✅ Interest submitted successfully!");
+      setInterests([...interests, newInterest]);
       setMessage("");
       setQuantity(1);
     } catch (err) {
-      console.error(err);
-      toast.error("Failed to submit interest");
+      console.error(err.response?.data || err.message);
+      toast.error(err.response?.data?.message || "Failed to submit interest");
     } finally {
       setSubmitting(false);
     }
@@ -76,234 +79,204 @@ const CropDetails = () => {
     try {
       await axios.put(
         `https://krishi-db-server.vercel.app/crops/${crop._id}/interest`,
-        {
-          interestId,
-          status: action,
-        }
+        { interestId, status: action }
       );
+
       setInterests(
         interests.map((i) =>
           i._id === interestId ? { ...i, status: action } : i
         )
       );
+
       toast.success(`Interest ${action}`);
     } catch (err) {
-      console.error(err);
-      toast.error("Failed to update interest");
+      console.error(err.response?.data || err.message);
+      toast.error(err.response?.data?.message || "Failed to update interest");
     }
   };
 
   return (
-    <motion.div
-      className="max-w-5xl mx-auto p-6"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.5 }}
-    >
-      {/* Crop Info */}
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-100 py-10 px-4">
       <motion.div
-        className="bg-white shadow-lg rounded-lg p-6 mb-8 overflow-hidden"
-        whileHover={{ scale: 1.02 }}
-        transition={{ type: "spring", stiffness: 150 }}
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="max-w-5xl mx-auto bg-white/90 backdrop-blur-lg rounded-2xl shadow-2xl border border-green-100 p-8 md:p-12"
       >
-        <motion.img
-          src={crop.image || "https://source.unsplash.com/600x400/?agriculture"}
-          alt={crop.name}
-          className="w-full h-80 object-cover rounded-md mb-4"
-          whileHover={{ scale: 1.05 }}
-          transition={{ duration: 0.3 }}
-        />
-        <motion.h2
-          className="text-3xl font-bold text-green-700"
-          initial={{ x: -20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ delay: 0.1 }}
-        >
-          {crop.name}
-        </motion.h2>
-        <motion.p
-          className="text-gray-700 mt-2"
-          initial={{ x: 20, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ delay: 0.15 }}
-        >
-          {crop.description}
-        </motion.p>
-        <motion.p
-          className="text-lg mt-2 font-semibold"
-          initial={{ y: 10, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-        >
-          Price: {crop.pricePerUnit} ৳ / {crop.unit}
-        </motion.p>
-        <motion.p
-          className="text-md text-gray-600 mt-1"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.25 }}
-        >
-          Quantity: {crop.quantity} {crop.unit}
-        </motion.p>
-        <motion.p
-          className="text-md text-gray-600 mt-1"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-        >
-          Location: {crop.location}
-        </motion.p>
-        <motion.p
-          className="text-sm text-gray-500 mt-1"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.35 }}
-        >
-          Posted by: {crop.owner?.ownerName || "Unknown"}
-        </motion.p>
+        {/* Crop Info */}
+        <div className="grid md:grid-cols-2 gap-10">
+          <motion.img
+            whileHover={{ scale: 1.03 }}
+            src={
+              crop.image || "https://source.unsplash.com/600x400/?agriculture"
+            }
+            alt={crop.name}
+            className="w-full h-80 object-cover rounded-xl shadow-md"
+          />
+          <div>
+            <h2 className="text-4xl font-bold text-green-800">{crop.name}</h2>
+            <p className="text-gray-700 mt-4">{crop.description}</p>
+
+            <div className="mt-4 space-y-2">
+              <p className="text-lg font-semibold text-green-700">
+                Price:{" "}
+                <span className="text-gray-800">
+                  {crop.pricePerUnit} ৳ / {crop.unit}
+                </span>
+              </p>
+              <p className="text-gray-700">
+                Quantity: {crop.quantity} {crop.unit}
+              </p>
+              <p className="text-gray-700">Location: {crop.location}</p>
+              <p className="text-sm text-gray-500">
+                Posted by: {crop.owner?.name || "Unknown"}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Interest Form (Buyer) */}
+        {!isOwner && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="mt-12 bg-gradient-to-r from-green-50 to-green-100 border border-green-200 rounded-xl p-6 shadow-md"
+          >
+            <h3 className="text-2xl font-bold text-green-800 mb-4">
+              🌿 Send Your Interest
+            </h3>
+            {hasInterest ? (
+              <p className="text-red-500 font-medium">
+                You have already sent an interest for this crop.
+              </p>
+            ) : (
+              <form
+                onSubmit={handleInterestSubmit}
+                className="flex flex-col md:flex-row gap-6"
+              >
+                <div className="flex-1">
+                  <label className="block font-medium text-gray-700 mb-1">
+                    Quantity ({crop.unit})
+                  </label>
+                  <input
+                    type="number"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Number(e.target.value))}
+                    min={1}
+                    className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 transition"
+                    required
+                  />
+                </div>
+
+                <div className="flex-1">
+                  <label className="block font-medium text-gray-700 mb-1">
+                    Message
+                  </label>
+                  <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-green-500 transition"
+                    rows={2}
+                    required
+                  />
+                </div>
+
+                <div className="flex flex-col justify-end">
+                  <p className="font-semibold text-gray-800 mb-2">
+                    Total:{" "}
+                    <span className="text-green-700">{totalPrice} ৳</span>
+                  </p>
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="px-6 py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white font-semibold transition-all shadow-md"
+                  >
+                    {submitting ? "Submitting..." : "Submit"}
+                  </button>
+                </div>
+              </form>
+            )}
+          </motion.div>
+        )}
+
+        {/* Interests (Owner) */}
+        {isOwner && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="mt-12 bg-gradient-to-r from-white to-green-50 border border-green-100 rounded-xl p-6 shadow-lg"
+          >
+            <h3 className="text-2xl font-bold text-green-800 mb-4">
+              💬 Received Interests
+            </h3>
+            {interests.length === 0 ? (
+              <p className="text-gray-600">No interests received yet.</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="bg-green-100 text-green-800">
+                      <th className="border px-4 py-2 text-left">Buyer</th>
+                      <th className="border px-4 py-2 text-left">Quantity</th>
+                      <th className="border px-4 py-2 text-left">Message</th>
+                      <th className="border px-4 py-2 text-left">Status</th>
+                      <th className="border px-4 py-2 text-left">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {interests.map((i) => (
+                      <tr
+                        key={i._id}
+                        className="border-t hover:bg-green-50 transition"
+                      >
+                        <td className="px-4 py-3">{i.userName}</td>
+                        <td className="px-4 py-3">{i.quantity}</td>
+                        <td className="px-4 py-3">{i.message}</td>
+                        <td
+                          className={`px-4 py-3 capitalize font-medium ${
+                            i.status === "accepted"
+                              ? "text-green-600"
+                              : i.status === "rejected"
+                              ? "text-red-600"
+                              : "text-yellow-600"
+                          }`}
+                        >
+                          {i.status}
+                        </td>
+                        <td className="px-4 py-3">
+                          {i.status === "pending" && (
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() =>
+                                  handleInterestAction(i._id, "accepted")
+                                }
+                                className="px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700 transition"
+                              >
+                                Accept
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleInterestAction(i._id, "rejected")
+                                }
+                                className="px-4 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                              >
+                                Reject
+                              </button>
+                            </div>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </motion.div>
+        )}
       </motion.div>
-
-      {/* Interest Form (Non-owner) */}
-      {!isOwner && (
-        <motion.div
-          className="bg-white shadow-md rounded-lg p-6 mb-8"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <h3 className="text-2xl font-bold mb-4">Send Interest</h3>
-          {hasInterest ? (
-            <p className="text-red-500">
-              You have already sent an interest for this crop.
-            </p>
-          ) : (
-            <form
-              onSubmit={handleInterestSubmit}
-              className="flex flex-col gap-4"
-            >
-              <motion.div
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.45 }}
-              >
-                <label className="block font-semibold mb-1">
-                  Quantity ({crop.unit})
-                </label>
-                <input
-                  type="number"
-                  value={quantity}
-                  onChange={(e) => setQuantity(Number(e.target.value))}
-                  min={1}
-                  className="w-full border rounded p-2"
-                  required
-                />
-              </motion.div>
-              <motion.div
-                initial={{ x: 20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ delay: 0.5 }}
-              >
-                <label className="block font-semibold mb-1">Message</label>
-                <textarea
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  className="w-full border rounded p-2"
-                  required
-                />
-              </motion.div>
-              <motion.p
-                className="font-bold"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.55 }}
-              >
-                Total Price: {totalPrice} ৳
-              </motion.p>
-              <motion.button
-                type="submit"
-                disabled={submitting}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition"
-              >
-                {submitting ? "Submitting..." : "Submit Interest"}
-              </motion.button>
-            </form>
-          )}
-        </motion.div>
-      )}
-
-      {/* Received Interests (Owner) */}
-      {isOwner && (
-        <motion.div
-          className="bg-white shadow-md rounded-lg p-6 mb-8 overflow-x-auto"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <h3 className="text-2xl font-bold mb-4">Received Interests</h3>
-          {interests.length === 0 ? (
-            <p>No interests received yet.</p>
-          ) : (
-            <table className="w-full table-auto border-collapse">
-              <thead>
-                <tr className="bg-green-100">
-                  <th className="border px-4 py-2">Buyer Name</th>
-                  <th className="border px-4 py-2">Quantity</th>
-                  <th className="border px-4 py-2">Message</th>
-                  <th className="border px-4 py-2">Status</th>
-                  <th className="border px-4 py-2">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <AnimatePresence>
-                  {interests.map((i) => (
-                    <motion.tr
-                      key={i._id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      transition={{ duration: 0.3 }}
-                      className="hover:bg-green-50"
-                    >
-                      <td className="border px-4 py-2">{i.userName}</td>
-                      <td className="border px-4 py-2">{i.quantity}</td>
-                      <td className="border px-4 py-2">{i.message}</td>
-                      <td className="border px-4 py-2 capitalize">
-                        {i.status}
-                      </td>
-                      <td className="border px-4 py-2">
-                        {i.status === "pending" && (
-                          <>
-                            <button
-                              onClick={() =>
-                                handleInterestAction(i._id, "accepted")
-                              }
-                              className="px-3 py-1 bg-green-600 text-white rounded mr-2 hover:bg-green-700 transition"
-                            >
-                              Accept
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleInterestAction(i._id, "rejected")
-                              }
-                              className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition"
-                            >
-                              Reject
-                            </button>
-                          </>
-                        )}
-                      </td>
-                    </motion.tr>
-                  ))}
-                </AnimatePresence>
-              </tbody>
-            </table>
-          )}
-        </motion.div>
-      )}
-    </motion.div>
+    </div>
   );
 };
 

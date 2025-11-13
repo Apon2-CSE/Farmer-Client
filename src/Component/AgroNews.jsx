@@ -6,21 +6,24 @@ const AgroNews = () => {
   const news = [
     {
       id: 1,
-      image: "https://source.unsplash.com/400x250/?farm,news",
+      image:
+        "https://tse1.mm.bing.net/th/id/OIP._8B0UMVMyUVIsr4bD4v3aAHaEK?pid=Api&P=0&h=220",
       title: "Smart Farming: The Future of Agriculture in Bangladesh",
       date: "Nov 10, 2025",
       desc: "Technology is transforming how farmers grow, monitor, and sell their crops efficiently.",
     },
     {
       id: 2,
-      image: "https://source.unsplash.com/400x250/?tractor,field",
+      image:
+        "https://tse1.mm.bing.net/th/id/OIP.63puMcG3YdAISdIjgGs0UgHaE6?pid=Api&P=0&h=220",
       title: "Organic Farming Gains Popularity Among Young Farmers",
       date: "Nov 5, 2025",
       desc: "More youth are now adopting sustainable organic farming methods to ensure soil health.",
     },
     {
       id: 3,
-      image: "https://source.unsplash.com/400x250/?agriculture,market",
+      image:
+        "https://tse4.mm.bing.net/th/id/OIP.leUcEChYZIbEsnNYuhNvmAHaE8?pid=Api&P=0&h=220",
       title: "Government Launches New Crop Insurance Policy",
       date: "Oct 29, 2025",
       desc: "The new policy aims to protect farmers against losses caused by natural disasters.",
@@ -39,7 +42,8 @@ const AgroNews = () => {
           Agro News & Blogs
         </motion.h2>
         <p className="text-gray-600 mb-10">
-          Stay updated with the latest agricultural trends, technologies, and success stories.
+          Stay updated with the latest agricultural trends, technologies, and
+          success stories.
         </p>
 
         {/* News Grid */}
