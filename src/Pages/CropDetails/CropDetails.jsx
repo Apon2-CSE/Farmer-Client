@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
-import useProduct from "../../Hook/useProducts";
 import { Authcontext } from "../../context/Authcontext";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -8,7 +7,6 @@ import LoadingScreen from "../Loading/LoadingScreen";
 import { motion } from "framer-motion";
 
 const CropDetails = () => {
-  const { products, loading, error } = useProduct();
   const { user } = useContext(Authcontext);
   const { id } = useParams();
 
@@ -17,17 +15,30 @@ const CropDetails = () => {
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [interests, setInterests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
+  // Fetch crop by ID
   useEffect(() => {
     document.title = "CropDetails | KrishiLink";
-    if (products.length > 0) {
-      const foundCrop = products.find((p) => String(p._id) === id);
-      if (foundCrop) {
-        setCrop(foundCrop);
-        setInterests(foundCrop.interests || []);
+
+    const fetchCrop = async () => {
+      try {
+        const res = await axios.get(
+          `https://krishi-db-server.vercel.app/crops/${id}`
+        );
+        setCrop(res.data);
+        setInterests(res.data.interests || []);
+      } catch (err) {
+        console.error(err.response?.data || err.message);
+        setError(err.response?.data?.message || "Failed to fetch crop details");
+      } finally {
+        setLoading(false);
       }
-    }
-  }, [products, id]);
+    };
+
+    fetchCrop();
+  }, [id]);
 
   if (loading) return <LoadingScreen />;
   if (error)
@@ -61,7 +72,7 @@ const CropDetails = () => {
         interestData
       );
 
-      const newInterest = res.data.interest || res.data; // backend must return interest object
+      const newInterest = res.data.interest || res.data;
 
       toast.success("✅ Interest submitted successfully!");
       setInterests([...interests, newInterest]);
